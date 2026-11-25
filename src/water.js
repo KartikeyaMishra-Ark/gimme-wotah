@@ -9,7 +9,9 @@ const water = {
     gravity: 0.13,
     maxSpeed: 3.5,
     spacing: 5.5,
-    interactionRadius: 13
+    interactionRadius: 13,
+    target: 80,
+    completed: false
 
 };
 
@@ -22,6 +24,7 @@ function resetWater() {
     water.spawnTimer = 0;
     water.released = false;
     water.collected = 0;
+    water.completed = false;
 }
 
 function isSolidAt(x, y, pixels) {
@@ -154,6 +157,11 @@ function moveParticle(particle, pixels) {
 
     if (isInsideBathtub(nextX, nextY)) {
         water.collected++;
+
+        if (water.collected >= water.target) {
+            water.completed = true;
+        }
+
         return false;
     }
 
@@ -198,7 +206,7 @@ function moveParticle(particle, pixels) {
 }
 
 function updateWater() {
-    if (water.released) {
+    if (water.released && !water.completed) {
         spawnWater();
     }
 
@@ -232,5 +240,41 @@ function drawWater(ctx) {
             Math.PI * 2
         )
         ctx.fill();
+    }
+
+    const meterX = 700;
+    const meterY = 35;
+    const meterWidth = 220;
+    const meterHeight = 18;
+    const progress = Math.min(water.collected / water.target, 1);
+
+    ctx.fillStyle = "#514332";
+    ctx.font = "bold 16px Nunito";
+    ctx.textAlign = "left";
+    ctx.fillText(
+        `WATER: ${water.collected} / ${water.target}`,
+        meterX,
+        meterY - 8
+    )
+
+    ctx.fillStyle = "#b9ad98";
+    ctx.fillRect(meterX, meterY, meterWidth, meterHeight);
+
+    ctx.fillStyle = "#48bfe0";
+    ctx.fillRect(
+        meterX,
+        meterY,
+        meterWidth * progress,
+        meterHeight
+    )
+
+    if (water.completed) {
+        ctx.fillStyle = "#514332";
+        ctx.textAlign = "center";
+        ctx.font = "900 42px Nunito";
+        ctx.fillText("LEVEL COMPLETE!", WIDTH / 2, 90);
+
+        ctx.font = "bold 20px Nunito";
+        ctx.fillText("You got the wotah!", WIDTH / 2, 125);
     }
 }
