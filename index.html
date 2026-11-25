@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gimme Wotah</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="game-container">
+        <header class="game-header">
+            <div>
+                <h1>GIMME WOTAH!!</h1>
+                <p>I wanna shower. Make the water come to me.</p>
+            </div>
+
+            <div class="level-info">
+                LEVEL 01
+            </div>
+        </header>
+
+        <section class="game-board">
+            <canvas id="gameCanvas"></canvas>
+        </section>
+
+        <footer class="game-controls">
+            <span>DRAW TO DIG</span>
+            <button id="restartBtn">RESTART</button>
+            <button id="startBtn">RELEASE WATER</button>
+        </footer>
+    </main>
+
+    <script src="src/physics.js"></script>
+    <script src="src/renderer.js"></script>
+    <script src="src/input.js"></script>
+    <script src="src/levels.js"></script>
+    <script src="game.js"></script>
+
+</body>
+</html>

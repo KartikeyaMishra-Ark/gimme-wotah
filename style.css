@@ -1,0 +1,64 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #e9dfcb;
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+.game-container {
+    width: min(100%, 950px);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    color: #514332;
+}
+
+.game-header h1 {
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.game-header p {
+    color: #927e64;
+    font-weight: 700;
+}
+
+.level-info {
+    background: #79664b;
+    color: #fff8e9;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 900;
+}
+
+.game-board {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #c8b18b;
+    border: 8px solid #79664b;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px #59452a25;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
