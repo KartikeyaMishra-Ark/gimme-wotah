@@ -1,7 +1,70 @@
-function drawWorld(ctx, width, height) {
-    // Background
+
+let soilArtCanvas = null;
+let soilRenderCanvas = null;
+
+function createRandom(seed) {
+    return function () {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+    }
+}
+
+function initializeSoilArt() {
+    soilArtCanvas = document.createElement("canvas");
+    soilArtCanvas.width = WIDTH;
+    soilArtCanvas.height = HEIGHT;
+
+    soilRenderCanvas = document.createElement("canvas");
+    soilRenderCanvas.width = WIDTH;
+    soilRenderCanvas.height = HEIGHT;
+
+    const s = soilArtCanvas.getContext("2d");
+    const random = createRandom(12345);
+
+    s.fillStyle = "#c99d70";
+    s.fillRect(0, 150, WIDTH, HEIGHT - 150);
+
+    s.fillStyle = "#b9875f";
+    s.beginPath();
+    s.moveTo(0, 195);
+    s.quadraticCurveTo(240, 185, 430, 205);
+    s.quadraticCurveTo(680, 225, 960, 190);
+    s.lineTo(960, 600);
+    s.lineTo(0, 600);
+    s.closePath();
+    s.fill();
+
+    s.fillStyle = "#a87550";
+    s.beginPath();
+    s.moveTo(0, 440);
+    s.quadraticCurveTo(260, 415, 490, 450);
+    s.quadraticCurveTo(730, 480, 960, 435);
+    s.lineTo(960, 600);
+    s.lineTo(0, 600);
+    s.closePath();
+    s.fill();
+
+    for (let i = 0; i < 450; i++) {
+        const x = random() * WIDTH;
+        const y = 165 + random() * 425;
+        const radius = 1 + random() * 2.5;
+
+        s.fillStyle = random() > 0.5
+            ? "#8d6046"
+            : "#e0b88c";
+
+        s.globalAlpha = 0.35;
+        s.beginPath();
+        s.arc(x, y, radius, 0, Math.PI * 2);
+        s.fill();
+    }
+
+    s.globalAlpha = 1;
+}
+
+function drawBackground(ctx) {
     ctx.fillStyle = "#dce8d0";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     // Distant hills
     ctx.fillStyle = "#b5cda5";
@@ -13,85 +76,8 @@ function drawWorld(ctx, width, height) {
     ctx.lineTo(960, 200);
     ctx.lineTo(0, 200);
     ctx.fill();
-
-    ctx.fillStyle = "#bd9368";
-    ctx.fillRect(0, 150, width, 450);
-
-    ctx.fillStyle = "#c99d70";
-    ctx.beginPath();
-    ctx.moveTo(0, 150);
-    ctx.lineTo(width, 150);
-    ctx.lineTo(width, 600);
-    ctx.lineTo(0, 600);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = "#b9875f";
-    ctx.beginPath();
-    ctx.moveTo(0, 195);
-    ctx.quadraticCurveTo(240, 185, 430, 205);
-    ctx.quadraticCurveTo(680, 225, 960, 190);
-    ctx.lineTo(960, 600);
-    ctx.lineTo(0, 600);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = "#a87550";
-    ctx.beginPath();
-    ctx.moveTo(0, 440);
-    ctx.quadraticCurveTo(260, 415, 490, 450);
-    ctx.quadraticCurveTo(730, 480, 960, 435);
-    ctx.lineTo(960, 600);
-    ctx.lineTo(0, 600);
-    ctx.closePath();
-    ctx.fill();
-
-    let seed = 12345;
-
-    function random() {
-        seed = (seed * 16807) % 2147483647;
-        return (seed - 1) / 2147483646;
-    }
-
-    for (let i = 0; i < 450; i++) {
-        const x = random() * width;
-        const y = 165 + random() * 425;
-        const radius = 1 + random() * 2.5;
-
-        ctx.fillStyle = random() > 0.5
-            ? "#8d6046"
-            : "#e0b88c";
-
-        ctx.globalAlpha = 0.35;
-
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
-
-    for (let i = 0; i < 24; i++) {
-        const x = 25 + random() * 910;
-        const y = 220 + random() * 340;
-        const size = 5 + random() * 13;
-
-        ctx.fillStyle = "#806f62";
-        ctx.strokeStyle = "#665448";
-        ctx.lineWidth = 2;
-
-        ctx.beginPath();
-        ctx.moveTo(x - size, y);
-        ctx.lineTo(x - size * 0.5, y - size * 0.8);
-        ctx.lineTo(x + size * 0.6, y - size * 0.7);
-        ctx.lineTo(x + size, y + size * 0.2);
-        ctx.lineTo(x + size * 0.3, y + size * 0.8);
-        ctx.lineTo(x - size * 0.7, y + size * 0.6);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-    }
-
+}
+function drawGrass(ctx) {
     ctx.fillStyle = "#78985d";
     ctx.beginPath();
     ctx.moveTo(0, 145);
@@ -103,11 +89,12 @@ function drawWorld(ctx, width, height) {
     ctx.closePath();
     ctx.fill();
 
+    const random = createRandom(54321);
     ctx.strokeStyle = "#527d4b";
     ctx.lineWidth = 2;
 
     for (let i = 0; i < 100; i++) {
-        const x = random() * width;
+        const x = random() * WIDTH;
         const y = 145 + random() * 8;
 
         ctx.beginPath();
@@ -115,88 +102,89 @@ function drawWorld(ctx, width, height) {
         ctx.lineTo(x - 3, y - 4 - random() * 7);
         ctx.stroke();
     }
+}
+
+function drawWorld(ctx, width, height) {
+    if (!soilArtCanvas) {
+        initializeSoilArt();
+    }
+
+    // Underground background
+    ctx.fillStyle = "#dce8d0";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    // Prepare soil artwork
+    const soilCtx = soilRenderCanvas.getContext("2d");
+
+    soilCtx.clearRect(0, 0, WIDTH, HEIGHT);
+    soilCtx.drawImage(soilArtCanvas, 0, 0);
+
+    // Apply digging mask
+    soilCtx.globalCompositeOperation = "destination-in";
+    soilCtx.drawImage(digging.terrainCanvas, 0, 0);
+    soilCtx.globalCompositeOperation = "source-over";
+
+    // Render visible soil
+    ctx.drawImage(soilRenderCanvas, 0, 0);
 
     drawWaterSource(ctx);
     drawBathtub(ctx);
 }
 
 function drawWaterSource(ctx) {
-    ctx.fillStyle = "#795d42";
-    ctx.fillRect(105, 65, 12, 85);
-    ctx.fillRect(190, 65, 12, 85);
-
-    ctx.fillStyle = "#e5d8b8";
-    ctx.strokeStyle = "#6d5942";
+    // Underground pipe
+    ctx.fillStyle = "#777b7d";
+    ctx.strokeStyle = "#45494b";
     ctx.lineWidth = 5;
 
     ctx.beginPath();
-    ctx.roundRect(95, 35, 115, 100, 12);
+    ctx.roundRect(20, 150, 145, 30, 7);
     ctx.fill();
     ctx.stroke();
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(100, 40, 105, 90, 8);
-    ctx.clip();
+    // Water visible inside the pipe
+    ctx.fillStyle = "#48bfe0";
+    ctx.fillRect(28, 157, 126, 16);
 
-    ctx.fillStyle = "#58b6ce";
-    ctx.fillRect(100, 75, 105, 55);
-
-    ctx.fillStyle = "#8bd7e4";
+    // Pipe outlet
+    ctx.fillStyle = "#353b3d";
     ctx.beginPath();
-    ctx.ellipse(152, 76, 52, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(165, 165, 5, 12, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.restore();
-
-    ctx.fillStyle = "#8b7558";
-    ctx.fillRect(142, 130, 20, 24);
-    ctx.fillRect(147, 145, 10, 16);
-
-    ctx.fillStyle = "#5b4937";
-    ctx.font = "bold 15px Nunito";
+    ctx.fillStyle = "#514332";
+    ctx.font = "bold 14px Nunito";
     ctx.textAlign = "center";
-    ctx.fillText("WATER", 152, 25);
+    ctx.fillText("WATER PIPE", 90, 135);
 }
 
 function drawBathtub(ctx) {
-    ctx.fillStyle = "#795d42";
-    ctx.globalAlpha = 0.2;
-    ctx.beginPath();
-    ctx.ellipse(780, 536, 105, 15, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
-
     ctx.fillStyle = "#eee8d6";
     ctx.strokeStyle = "#786b59";
     ctx.lineWidth = 5;
 
     ctx.beginPath();
-    ctx.moveTo(685, 465);
-    ctx.lineTo(705, 530);
-    ctx.quadraticCurveTo(780, 555, 855, 530);
-    ctx.lineTo(875, 465);
+    ctx.moveTo(720, 440);
+    ctx.lineTo(740, 510);
+    ctx.quadraticCurveTo(800, 535, 860, 510);
+    ctx.lineTo(880, 440);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#d5cbb7";
     ctx.beginPath();
-    ctx.ellipse(780, 465, 95, 18, 0, 0, Math.PI * 2);
+    ctx.ellipse(800, 440, 80, 16, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#72c6d6";
     ctx.beginPath();
-    ctx.ellipse(780, 470, 75, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(800, 445, 63, 9, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "#786b59";
-    ctx.fillRect(710, 530, 13, 22);
-    ctx.fillRect(837, 530, 13, 22);
-
-    ctx.fillStyle = "#655443";
+    ctx.fillStyle = "#514332";
     ctx.font = "bold 16px Nunito";
     ctx.textAlign = "center";
-    ctx.fillText("YOUR BATHTUB", 780, 580);
+    ctx.fillText("BATHTUB", 800, 565);
 }

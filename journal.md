@@ -1,0 +1,3 @@
+# 25-11-2026 ~5hr 44min
+
+I am trying to make ts game and it really is very complicated. I have created and discarded three designs and have settled to the current one. I have created input which removes only the soil and have made it interactive with the water. the water simulation is very choppy rn but it does the work i may revamp it later on. maybe in the next commit. Once i have the basic physics down level creation will be another challenge. BTW this game is inspired from where is my water game i used to play when i was as kid.
