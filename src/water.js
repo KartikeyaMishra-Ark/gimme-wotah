@@ -1,4 +1,3 @@
-
 const water = {
     particles: [],
     spawnTimer: 0,
@@ -54,14 +53,23 @@ function isSolidAt(x, y, pixels) {
     return false;
 }
 
-function isInsideBathtub(x, y) {
+
+function isTouchingPipe(x, y) {
+   const dx = x - 885;
+    const dy = Math.max(440, Math.min(y, 502)) - y;
+
+    if (Math.hypot(dx, dy) <= 10) {
+        return true;
+    }
+
     return (
-        x >= 725 &&
-        x <= 875 &&
-        y >= 440 &&
-        y <= 505
+        x >= 873 &&
+        x <= 898 &&
+        y >= 500 &&
+        y <= 512
     );
 }
+
 
 function spawnWater() {
     water.spawnTimer++;
@@ -154,8 +162,7 @@ function moveParticle(particle, pixels) {
 
     const nextX = particle.x + particle.vx;
     const nextY = particle.y + particle.vy;
-
-    if (isInsideBathtub(nextX, nextY)) {
+    if (isTouchingPipe(nextX, nextY)) {
         water.collected++;
 
         if (water.collected >= water.target) {

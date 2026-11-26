@@ -1,9 +1,10 @@
-
 const digging = {
     radius: 18,
     isDrawing: false,
     terrainCanvas: document.createElement("canvas"),
     terrainCtx: null,
+    protectedCanvas: document.createElement("canvas"),
+    protectedCtx: null,
     holes: [],
     lastPoint: null
 };
@@ -11,15 +12,19 @@ const digging = {
 digging.terrainCanvas.width = WIDTH;
 digging.terrainCanvas.height = HEIGHT;
 digging.terrainCtx = digging.terrainCanvas.getContext("2d");
+digging.protectedCanvas.width = WIDTH;
+digging.protectedCanvas.height = HEIGHT;
+digging.protectedCtx = digging.protectedCanvas.getContext("2d");
 
 function initializeTerrain() {
     const t = digging.terrainCtx;
 
+
+
     t.clearRect(0, 0, WIDTH, HEIGHT);
 
     t.fillStyle = "#ffffff";
-    t.fillRect(0, 150, WIDTH, HEIGHT - 150);
-
+    t.fillRect(0, 0, WIDTH, HEIGHT);
     t.globalCompositeOperation = "destination-out";
     t.fillRect(145, 155, 30, 25);
 
@@ -37,13 +42,56 @@ function getCanvasPosition(event) {
 
 function digAt(x, y) {
     const t = digging.terrainCtx;
+    const p = digging.protectedCtx;
 
-    t.save();
-    t.globalCompositeOperation = "destination-out";
-    t.beginPath();
-    t.arc(x, y, digging.radius, 0, Math.PI * 2);
-    t.fill();
-    t.restore();
+    const radius = digging.radius;
+
+    const area = document.createElement("canvas");
+    area.width = radius * 2 + 2;
+    area.height = radius * 2 + 2;
+
+    const a = area.getContext("2d");
+
+    a.drawImage(
+        digging.terrainCanvas,
+        x - radius - 1,
+        y - radius - 1,
+        area.width,
+        area.height,
+        0,
+        0,
+        area.width,
+        area.height
+    )
+
+    a.globalCompositeOperation = "destination-out";
+
+    a.beginPath();
+    a.arc(radius + 1, radius + 1, radius, 0, Math.PI * 2);
+    a.fill();
+
+    a.globalCompositeOperation = "destination-in";
+
+    a.drawImage(
+        digging.protectedCanvas,
+        x - radius - 1,
+        y - radius - 1,
+        area.width,
+        area.height,
+        0,
+        0,
+        area.width,
+        area.height
+    )
+
+    t.clearRect(
+        x - radius - 1,
+        y - radius - 1,
+        area.width,
+        area.height
+    )
+
+    t.drawImage(area, x - radius - 1, y - radius - 1);
 }
 
 function startDigging(event) {
@@ -98,6 +146,19 @@ function resetDigging() {
     initializeTerrain();
     stopDigging();
 }
+function initializeProtectedTerrain() {
+    const p = digging.protectedCtx;
+
+    p.clearRect(0, 0, WIDTH, HEIGHT);
+
+    p.fillStyle = "#ffffff";
+    p.fillRect(0, 0, WIDTH, 145);
+    p.fillRect(0, 0, 15, HEIGHT);
+    p.fillRect(945, 0, 15, HEIGHT);
+    p.fillRect(0, 585, WIDTH, 15);
+
+    p.fillRect(805, 450, 155, 150);
+}
 
 canvas.addEventListener("pointerdown", startDigging);
 canvas.addEventListener("pointermove", continueDigging);
@@ -105,3 +166,4 @@ canvas.addEventListener("pointerup", stopDigging);
 canvas.addEventListener("pointercancel", stopDigging);
 
 initializeTerrain();
+initializeProtectedTerrain();

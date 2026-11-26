@@ -22,7 +22,7 @@ function initializeSoilArt() {
     const random = createRandom(12345);
 
     s.fillStyle = "#c99d70";
-    s.fillRect(0, 150, WIDTH, HEIGHT - 150);
+    s.fillRect(0, 0, WIDTH, HEIGHT);
 
     s.fillStyle = "#b9875f";
     s.beginPath();
@@ -63,7 +63,7 @@ function initializeSoilArt() {
 }
 
 function drawBackground(ctx) {
-    ctx.fillStyle = "#dce8d0";
+    ctx.fillStyle = "#c99d70";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     // Distant hills
@@ -109,26 +109,38 @@ function drawWorld(ctx, width, height) {
         initializeSoilArt();
     }
 
-    // Underground background
-    ctx.fillStyle = "#dce8d0";
+    ctx.fillStyle = "#626b68";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.strokeStyle = "#4e5754";
+    ctx.lineWidth = 2;
 
-    // Prepare soil artwork
+    for (let y = 80; y < HEIGHT; y += 100) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(WIDTH, y);
+        ctx.stroke();
+    }
+
+    for (let x = 0; x < WIDTH; x += 120) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, HEIGHT);
+        ctx.stroke();
+    }
+
     const soilCtx = soilRenderCanvas.getContext("2d");
 
     soilCtx.clearRect(0, 0, WIDTH, HEIGHT);
     soilCtx.drawImage(soilArtCanvas, 0, 0);
 
-    // Apply digging mask
     soilCtx.globalCompositeOperation = "destination-in";
     soilCtx.drawImage(digging.terrainCanvas, 0, 0);
     soilCtx.globalCompositeOperation = "source-over";
 
-    // Render visible soil
     ctx.drawImage(soilRenderCanvas, 0, 0);
 
+    drawWashroom(ctx);
     drawWaterSource(ctx);
-    drawBathtub(ctx);
 }
 
 function drawWaterSource(ctx) {
@@ -158,33 +170,78 @@ function drawWaterSource(ctx) {
     ctx.fillText("WATER PIPE", 90, 135);
 }
 
-function drawBathtub(ctx) {
+
+function drawWashroom(ctx) {
+    ctx.fillStyle = "#777777";
+    ctx.fillRect(805, 450, 155, 150);
+
+    ctx.fillStyle = "#e7dfcb";
+    ctx.fillRect(817, 462, 143, 123);
+
+    ctx.fillStyle = "#b7aa91";
+    ctx.fillRect(817, 585, 143, 15);
+
     ctx.fillStyle = "#eee8d6";
     ctx.strokeStyle = "#786b59";
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 4
 
     ctx.beginPath();
-    ctx.moveTo(720, 440);
-    ctx.lineTo(740, 510);
-    ctx.quadraticCurveTo(800, 535, 860, 510);
-    ctx.lineTo(880, 440);
+    ctx.moveTo(845, 535);
+    ctx.lineTo(852, 572)
+    ctx.quadraticCurveTo(880, 585, 908, 572);
+    ctx.lineTo(915, 535)
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#d5cbb7";
     ctx.beginPath();
-    ctx.ellipse(800, 440, 80, 16, 0, 0, Math.PI * 2);
+    ctx.ellipse(880, 535, 40, 8, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#72c6d6";
     ctx.beginPath();
-    ctx.ellipse(800, 445, 63, 9, 0, 0, Math.PI * 2);
+    ctx.ellipse(880, 537, 31, 4, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "#514332";
-    ctx.font = "bold 16px Nunito";
-    ctx.textAlign = "center";
-    ctx.fillText("BATHTUB", 800, 565);
+    drawShowerPipe(ctx);
 }
+
+
+function drawShowerPipe(ctx) {
+    ctx.strokeStyle = "#777b7d";
+    ctx.lineWidth = 9;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(885, 440);
+    ctx.lineTo(885, 502);
+    ctx.stroke();
+
+    // Metallic highlight
+    ctx.strokeStyle = "#c5c9ca";
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.moveTo(883, 445);
+    ctx.lineTo(883, 498);
+    ctx.stroke();
+
+    // Showerhead
+    ctx.fillStyle = "#656b6d";
+    ctx.beginPath();
+    ctx.roundRect(873, 500, 25, 9, 4);
+    ctx.fill();
+
+    // Shower holes
+    ctx.fillStyle = "#45494b";
+
+    for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(878 + i * 5, 507, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
