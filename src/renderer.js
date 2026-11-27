@@ -137,13 +137,19 @@ function drawWorld(ctx, width, height) {
     soilCtx.drawImage(digging.terrainCanvas, 0, 0);
     soilCtx.globalCompositeOperation = "source-over";
 
+    drawDrains(ctx, false);
     ctx.drawImage(soilRenderCanvas, 0, 0);
 
     drawWashroom(ctx);
+    drawRocks(ctx);
     drawWaterSource(ctx);
+    drawDrains(ctx, true);
 }
 
 function drawWaterSource(ctx) {
+    ctx.save();
+    ctx.translate(0, getLevel().sourceY - 165);
+
     // Underground pipe
     ctx.fillStyle = "#777b7d";
     ctx.strokeStyle = "#45494b";
@@ -168,6 +174,36 @@ function drawWaterSource(ctx) {
     ctx.font = "bold 14px Nunito";
     ctx.textAlign = "center";
     ctx.fillText("WATER PIPE", 90, 135);
+
+    ctx.restore();
+}
+
+
+function drawDrains(ctx, overlay) {
+    for (const drain of getLevel().drains) {
+        if (!overlay) {
+            ctx.fillStyle = "#2f3433";
+            ctx.fillRect(drain.x, drain.y, drain.w, drain.h);
+
+            ctx.fillStyle = "#4e5754";
+
+            for (let x = drain.x + 8; x < drain.x + drain.w; x += 14) {
+                ctx.fillRect(x, drain.y, 5, drain.h);
+            }
+        } else {
+            ctx.save();
+            ctx.setLineDash([8, 6]);
+            ctx.strokeStyle = "#9c3d2e";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(drain.x, drain.y, drain.w, drain.h);
+            ctx.restore();
+
+            ctx.fillStyle = "#9c3d2e";
+            ctx.font = "bold 14px Nunito";
+            ctx.textAlign = "center";
+            ctx.fillText("SEWER", drain.x + drain.w / 2, drain.y - 8);
+        }
+    }
 }
 
 

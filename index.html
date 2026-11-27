@@ -16,7 +16,7 @@
                 <p>I wanna shower. Make the water come to me.</p>
             </div>
 
-            <div class="level-info">
+            <div class="level-info" id="levelLabel">
                 LEVEL 01
             </div>
         </header>
@@ -27,12 +27,15 @@
 
         <footer class="game-controls">
             <span>DRAW TO DIG</span>
+            <div id="levelSelect"></div>
             <button id="restartBtn">RESTART</button>
             <button id="startBtn">RELEASE WATER</button>
+            <button id="nextBtn" hidden>NEXT LEVEL</button>
         </footer>
     </main>
     <script src="src/renderer.js"></script>
     <script src="game.js"></script>
+    <script src="src/rocks.js"></script>
     <script src="src/digging.js"></script>
     <script src="src/water.js"></script>
     <script src="src/input.js"></script>

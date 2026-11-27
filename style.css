@@ -61,4 +61,72 @@ canvas {
     display: block;
     width: 100%;
     height: 100%;
+    touch-action: none;
+}
+
+.game-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    color: #514332;
+    font-weight: 800;
+}
+
+.game-controls button {
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 16px;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 12px;
+    background: #79664b;
+    color: #fff8e9;
+    cursor: pointer;
+}
+
+.game-controls button:hover {
+    background: #8c7656;
+}
+
+.game-controls button:active {
+    transform: translateY(1px);
+}
+
+.game-controls button[hidden] {
+    display: none;
+}
+
+#levelSelect {
+    display: flex;
+    gap: 8px;
+    margin-right: auto;
+    margin-left: 12px;
+}
+
+.game-controls .level-dot {
+    padding: 8px 12px;
+    font-size: 14px;
+    background: #b9ad98;
+}
+
+.game-controls .level-dot.active {
+    background: #79664b;
+}
+
+.game-controls .level-dot:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+#startBtn {
+    background: #2f9bbd;
+}
+
+#startBtn:hover {
+    background: #48bfe0;
+}
+
+#nextBtn {
+    background: #78985d;
 }

@@ -10,11 +10,18 @@ const water = {
     spacing: 5.5,
     interactionRadius: 13,
     target: 80,
-    completed: false
+    completed: false,
+    failed: false,
+    recorded: false,
+    spawned: 0,
+    lost: 0,
+    budget: Infinity,
+    stars: 0
 
 };
 
 function releaseWater() {
+    if (!water.released) playSound("release");
     water.released = true;
 }
 
@@ -24,6 +31,13 @@ function resetWater() {
     water.released = false;
     water.collected = 0;
     water.completed = false;
+    water.failed = false;
+    water.recorded = false;
+    water.spawned = 0;
+    water.lost = 0;
+    water.stars = 0;
+    water.target = getLevel().target;
+    water.budget = getLevel().waterBudget;
 }
 
 function isSolidAt(x, y, pixels) {
@@ -71,18 +85,34 @@ function isTouchingPipe(x, y) {
 }
 
 
+function isInDrain(x, y) {
+    for (const drain of getLevel().drains) {
+        if (
+            x >= drain.x && x <= drain.x + drain.w &&
+            y >= drain.y && y <= drain.y + drain.h
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
 function spawnWater() {
     water.spawnTimer++;
 
     if (
         water.spawnTimer >= 2 &&
-        water.particles.length < water.maxParticles
+        water.particles.length < water.maxParticles &&
+        water.spawned < water.budget
     ) {
         water.spawnTimer = 0;
+        water.spawned++;
 
         water.particles.push({
             x: 165 + Math.random() * 3,
-            y: 165,
+            y: getLevel().sourceY,
             vx: (Math.random() - 0.5) * 0.15,
             vy: 1,
             radius: 3
@@ -217,11 +247,7 @@ function updateWater() {
         spawnWater();
     }
 
-    const terrain = digging.terrainCtx.getImageData(
-        0, 0, WIDTH, HEIGHT
-    );
-
-    const pixels = terrain.data;
+    const pixels = getTerrainPixels();
 
     applyParticleInteractions();
 
@@ -231,6 +257,26 @@ function updateWater() {
         if (!moveParticle(particle, pixels)) {
             water.particles.splice(i, 1);
         }
+        else if (isInDrain(particle.x, particle.y)) {
+            water.lost++;
+            water.particles.splice(i, 1);
+        }
+    }
+
+    if (water.completed && !water.recorded) {
+        water.recorded = true;
+        onLevelComplete();
+    }
+
+    if (
+        water.released &&
+        !water.completed &&
+        !water.failed &&
+        water.spawned >= water.budget &&
+        water.collected + water.particles.length < water.target
+    ) {
+        water.failed = true;
+        playSound("fail");
     }
 }
 
@@ -242,10 +288,19 @@ function drawWater(ctx) {
         ctx.arc(
             particle.x,
             particle.y,
-            particle.radius,
+            particle.radius + 1,
             0,
             Math.PI * 2
         )
+        ctx.fill();
+    }
+
+    // little highlight on every drop
+    ctx.fillStyle = "#b9ecf7";
+
+    for (const particle of water.particles) {
+        ctx.beginPath();
+        ctx.arc(particle.x - 1, particle.y - 1, 1.2, 0, Math.PI * 2);
         ctx.fill();
     }
 
@@ -275,6 +330,15 @@ function drawWater(ctx) {
         meterHeight
     )
 
+    ctx.fillStyle = "#927e64";
+    ctx.font = "bold 12px Nunito";
+    ctx.textAlign = "left";
+    ctx.fillText(
+        `TANK: ${Math.max(0, water.budget - water.spawned)}`,
+        meterX,
+        meterY + meterHeight + 16
+    );
+
     if (water.completed) {
         ctx.fillStyle = "#514332";
         ctx.textAlign = "center";
@@ -283,5 +347,22 @@ function drawWater(ctx) {
 
         ctx.font = "bold 20px Nunito";
         ctx.fillText("You got the wotah!", WIDTH / 2, 125);
+
+        ctx.font = "900 34px Nunito";
+        ctx.fillText(
+            "\u2605".repeat(water.stars) + "\u2606".repeat(3 - water.stars),
+            WIDTH / 2,
+            165
+        );
+    }
+
+    if (water.failed) {
+        ctx.fillStyle = "#514332";
+        ctx.textAlign = "center";
+        ctx.font = "900 42px Nunito";
+        ctx.fillText("OUT OF WATER!", WIDTH / 2, 90);
+
+        ctx.font = "bold 20px Nunito";
+        ctx.fillText("Too much got lost. Hit RESTART.", WIDTH / 2, 125);
     }
 }
