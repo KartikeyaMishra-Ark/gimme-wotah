@@ -1,3 +1,7 @@
 # 25-11-2026 ~5hr 44min
 
 I am trying to make ts game and it really is very complicated. I have created and discarded three designs and have settled to the current one. I have created input which removes only the soil and have made it interactive with the water. the water simulation is very choppy rn but it does the work i may revamp it later on. maybe in the next commit. Once i have the basic physics down level creation will be another challenge. BTW this game is inspired from where is my water game i used to play when i was as kid.
+
+# 28-11-20226 ~10hr
+
+Phew i have spend a lot of time refining ts and have finally made the base game as good as i possibly can. i have created the core game mechanic properly. water is still just paticles but i aint doing more to it anymore. added a little bit of digging sounds. created proper ui. the game even has basic levels now. i added a sewer which drains water so the playe will have to avoid it. i surprisingly did not run into as many problems while creatin g this as i could have. i could ship it right now and it could count as a proper project but i want to create proper levels and more complcated puzzle as well as new mechanics to make the game seem complete. 
